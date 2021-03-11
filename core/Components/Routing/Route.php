@@ -11,7 +11,7 @@ class Route
 
     public function resolve(string $requestUri, string $requestMethod): RouteItem
     {
-        $this->routeResolver = new routeResolver($this->routeItems);
+        $this->routeResolver = new RouteResolver($this->routeItems);
         $this->routeResolver->addItems($this->routeItems);
 
         $this->resolvedRouteItem = $this->routeResolver->resolve($requestUri, $requestMethod);

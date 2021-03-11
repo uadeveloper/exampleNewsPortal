@@ -90,6 +90,14 @@ class AdminNewsController extends AbstractController
             $newsItem = new News();
         }
 
+        if(\mb_strlen(htmlspecialchars($_POST['content'])) > 256) {
+            echo json_encode([
+                "result" => false,
+                "error" => "Максимальная длина заголовка 500 символов."
+            ]);
+            return;
+        }
+
         try {
             $publicationDate = new \DateTime($_POST['publication_date']);
         } catch (\Exception $ex) {

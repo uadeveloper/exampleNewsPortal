@@ -77,7 +77,7 @@ class AuthController extends AbstractController
         $login = trim($_POST['login']);
         $password = trim($_POST['password']);
 
-        if (mb_strlen($login) < 6) {
+        if (\mb_strlen($login) < 6) {
             echo(json_encode([
                 "result" => false,
                 "error" => "Логин должен содержать минимум 6 сиволов."
@@ -85,7 +85,7 @@ class AuthController extends AbstractController
             return;
         }
 
-        if (mb_strlen($password) < 6 || !preg_match("#[0-9]+#", $password) || !preg_match("#[a-zA-ZА-Яа-я]+#", $password)) {
+        if (\mb_strlen($password) < 6 || !preg_match("#[0-9]+#", $password) || !preg_match("#[a-zA-ZА-Яа-я]+#", $password)) {
             echo(json_encode([
                 "result" => false,
                 "error" => "Пароль должен быть >= 6 символов и содержать букву и цифру."
