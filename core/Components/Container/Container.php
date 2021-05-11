@@ -2,6 +2,8 @@
 
 namespace SiteCore\Components\Container;
 
+use Exception;
+
 /**
  * Class Container
  * @package SiteCore\Components\Container
@@ -14,28 +16,28 @@ class Container implements ContainerInterface
     /**
      * @param string $serviceName
      * @param callable $serviceInstance
-     * @throws \Exception
+     * @throws Exception
      */
-    public function set(string $serviceName, callable $serviceInstance)
+    public function set(string $serviceName, callable $serviceInstance): void
     {
 
         if ($serviceName == "") {
-            throw new \Exception("Service invalid name");
+            throw new Exception("Service invalid name");
         }
 
-        $this->services[$serviceName] = call_user_func($serviceInstance);
+        $this->services[$serviceName] = $serviceInstance();
 
     }
 
     /**
      * @param $id
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function get($id)
     {
         if (!$this->has($id)) {
-            throw new \Exception("Service not found");
+            throw new Exception("Service not found");
         }
 
         return $this->services[$id];
@@ -45,7 +47,7 @@ class Container implements ContainerInterface
      * @param $id
      * @return bool
      */
-    public function has($id)
+    public function has($id): bool
     {
         return isset($this->services[$id]);
     }

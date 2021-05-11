@@ -24,7 +24,7 @@ class User extends AbstractEntity
     /**
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -40,7 +40,7 @@ class User extends AbstractEntity
     /**
      * @return string
      */
-    public function getLogin()
+    public function getLogin(): string
     {
         return $this->login;
     }
@@ -48,7 +48,7 @@ class User extends AbstractEntity
     /**
      * @param string $login
      */
-    public function setLogin($login): void
+    public function setLogin(string $login): void
     {
         $this->login = $login;
     }
@@ -56,7 +56,7 @@ class User extends AbstractEntity
     /**
      * @return string
      */
-    public function getPasswordHash()
+    public function getPasswordHash(): string
     {
         return $this->password_hash;
     }
@@ -64,7 +64,7 @@ class User extends AbstractEntity
     /**
      * @param string $password_hash
      */
-    public function setPasswordHash($password_hash): void
+    public function setPasswordHash(string $password_hash): void
     {
         $this->password_hash = $password_hash;
     }
@@ -92,7 +92,7 @@ class User extends AbstractEntity
     public function hasUserPermission(string $permission): bool
     {
         foreach ($this->userPermissions as $permissionEntity) {
-            if ($permissionEntity->getPermission() == $permission) {
+            if ($permissionEntity->getPermission() === $permission) {
                 return true;
             }
         }
@@ -103,7 +103,7 @@ class User extends AbstractEntity
     /**
      * @return string
      */
-    public function getCreated()
+    public function getCreated(): string
     {
         return $this->created;
     }
@@ -111,10 +111,9 @@ class User extends AbstractEntity
     /**
      * @param string $created
      */
-    public function setCreated($created): void
+    public function setCreated(string $created): void
     {
         $this->created = $created;
     }
-
 
 }

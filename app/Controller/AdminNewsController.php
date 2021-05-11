@@ -4,42 +4,18 @@ namespace App\Controller;
 
 use App\Entity\News;
 use App\Repository\NewsRepository;
-use App\Repository\UserRepository;
-use SiteCore\AbstractController;
 use SiteCore\Components\Routing\Route;
-use SiteCore\Components\Session\Session;
-use SiteCore\Components\Template\View;
 
-class AdminNewsController extends AbstractController
+class AdminNewsController extends AdminBaseController
 {
-    private $db;
-    private $view;
+
     private $newsRepository;
-
-    public function __construct(Session $session, View $view, \PDO $db, Route $route)
-    {
-
-        $this->db = $db;
-        $this->view = $view;
-        $this->newsRepository = new NewsRepository($db);
-
-        $userRepository = new UserRepository($db);
-
-        if ($session->has("user_id")) {
-            $this->user = $userRepository->findById($session->get("user_id"));
-            $view->assign("user", $this->user);
-        }
-
-        if (!$this->user || !$this->user->hasUserPermission("admin")) {
-            $route->redirect("/");
-        }
-
-        $this->view->assign("title", "Администратор - Управление новостями.");
-
-    }
 
     public function index(Route $route)
     {
+
+        $this->newsRepository = new NewsRepository($this->db);
+
         $newsLimits = [
             "offset" => (int)$route->getRouteItem()->getParams()[0],
             "limit" => 10,
@@ -48,6 +24,7 @@ class AdminNewsController extends AbstractController
 
         $news = $this->newsRepository->loadNews($newsLimits);
 
+        $this->view->assign("title", "Администратор - Управление новостями.");
         $this->view->render("/admin/news/index.php", [
             "news" => $news,
             "newsLimits" => $newsLimits,
@@ -56,6 +33,9 @@ class AdminNewsController extends AbstractController
 
     public function view(Route $route)
     {
+
+        $this->newsRepository = new NewsRepository($this->db);
+
         $newsId = (int)$route->getRouteItem()->getParams()[0];
 
         if ($newsId) {
@@ -75,6 +55,9 @@ class AdminNewsController extends AbstractController
 
     public function store()
     {
+
+        $this->newsRepository = new NewsRepository($this->db);
+
         $newsId = (int)$_POST["id"];
 
         if ($newsId) {
@@ -90,7 +73,7 @@ class AdminNewsController extends AbstractController
             $newsItem = new News();
         }
 
-        if(\mb_strlen(htmlspecialchars($_POST['content'])) > 256) {
+        if (\mb_strlen(htmlspecialchars($_POST['content'])) > 256) {
             echo json_encode([
                 "result" => false,
                 "error" => "Максимальная длина заголовка 500 символов."
@@ -123,6 +106,8 @@ class AdminNewsController extends AbstractController
 
     public function delete(Route $route)
     {
+        $this->newsRepository = new NewsRepository($this->db);
+
         $id = (int)$route->getRouteItem()->getParams()[0];
 
         $newsItem = $this->newsRepository->findByColumn("id", $id);

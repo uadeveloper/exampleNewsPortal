@@ -14,7 +14,7 @@ class AbstractEntity
     /**
      * @param array $data
      */
-    public function loadByArray(array $data)
+    public function loadByArray(array $data): void
     {
         foreach ($data as $key => $item) {
             #if (isset($this->{$key})) {

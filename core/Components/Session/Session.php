@@ -9,14 +9,27 @@ namespace SiteCore\Components\Session;
 class Session
 {
 
-    public function __construct() {
+    public function __construct()
+    {
+        if($_COOKIE[session_name()]) {
+            $this->start();
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStarted() : bool {
+        return session_status() === PHP_SESSION_ACTIVE;
+    }
+
+    public function start() : void {
         session_start();
     }
 
     /**
      * @param string $key
      * @return mixed
-     * @throws \Exception
      */
     public function __get(string $key)
     {
@@ -38,7 +51,7 @@ class Session
      * @param string $key
      * @return bool
      */
-    public function __isset(string $key)
+    public function __isset(string $key): bool
     {
         return $this->has($key);
     }
@@ -49,6 +62,10 @@ class Session
      */
     public function has(string $key): bool
     {
+        if(!$this->isStarted()) {
+            return false;
+        }
+
         return array_key_exists($key, $_SESSION);
     }
 
@@ -56,16 +73,16 @@ class Session
      * @param string $key
      * @param $value
      */
-    public function __set(string $key, $value)
+    public function __set(string $key, $value) : void
     {
-        return $this->set($key, $value);
+        $this->set($key, $value);
     }
 
     /**
      * @param string $key
      * @param $value
      */
-    public function set(string $key, $value)
+    public function set(string $key, $value) : void
     {
         $_SESSION[$key] = $value;
     }
@@ -74,7 +91,7 @@ class Session
      * @param string $key
      * @return bool
      */
-    public function __unset(string $key)
+    public function __unset(string $key): bool
     {
         return $this->delete($key);
     }
@@ -91,6 +108,10 @@ class Session
         }
 
         return false;
+    }
+
+    public function destroy() : void {
+        session_destroy();
     }
 
 }

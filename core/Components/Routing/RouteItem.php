@@ -53,7 +53,7 @@ class RouteItem
     }
 
     /**
-     * @param array $match
+     * @param string $match
      */
     public function setMatch(string $match): void
     {
@@ -78,14 +78,15 @@ class RouteItem
         }
     }
 
-    public function hasMethod(string $method) {
-        return in_array(strtoupper($method), $this->methods);
+    public function hasMethod(string $method): bool
+    {
+        return in_array(strtoupper($method), $this->methods, true);
     }
 
     /**
      * @return string
      */
-    public function getClassHandler()
+    public function getClassHandler(): string
     {
         return $this->classHandler;
     }
@@ -93,7 +94,7 @@ class RouteItem
     /**
      * @param string $classHandler
      */
-    public function setClassHandler($classHandler): void
+    public function setClassHandler(string $classHandler): void
     {
         $this->classHandler = $classHandler;
     }
@@ -101,7 +102,7 @@ class RouteItem
     /**
      * @return string
      */
-    public function getClassHandlerFunction()
+    public function getClassHandlerFunction(): string
     {
         return $this->classHandlerFunction;
     }
@@ -109,7 +110,7 @@ class RouteItem
     /**
      * @param string $classHandlerFunction
      */
-    public function setClassHandlerFunction($classHandlerFunction): void
+    public function setClassHandlerFunction(string $classHandlerFunction): void
     {
         $this->classHandlerFunction = $classHandlerFunction;
     }

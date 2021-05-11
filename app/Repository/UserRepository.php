@@ -3,9 +3,15 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use PDO;
 use SiteCore\AbstractEntity;
 use SiteCore\PDORepository;
 
+/**
+ * Class UserRepository
+ * @package App\Repository
+ * TODO: перенести общие методы
+ */
 class UserRepository extends PDORepository
 {
 
@@ -15,15 +21,15 @@ class UserRepository extends PDORepository
         $userPermissionRepository = new UserPermissionRepository($this->db);
 
         $sth = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM users ORDER BY id DESC LIMIT :offset, :limit");
-        $sth->bindParam(':offset', $limits['offset'], \PDO::PARAM_INT);
-        $sth->bindParam(':limit', $limits['limit'], \PDO::PARAM_INT);
+        $sth->bindParam(':offset', $limits['offset'], PDO::PARAM_INT);
+        $sth->bindParam(':limit', $limits['limit'], PDO::PARAM_INT);
         $sth->execute();
 
         $countQuery = $this->db->prepare('SELECT FOUND_ROWS() AS rows_count');
         $countQuery->execute();
-        $limits['count'] = $countQuery->fetch(\PDO::FETCH_ASSOC)['rows_count'];
+        $limits['count'] = $countQuery->fetch(PDO::FETCH_ASSOC)['rows_count'];
 
-        $dbRaw = $sth->fetchAll(\PDO::FETCH_ASSOC);
+        $dbRaw = $sth->fetchAll(PDO::FETCH_ASSOC);
 
         $items = [];
         foreach ($dbRaw as $dbRawItem) {
@@ -44,12 +50,14 @@ class UserRepository extends PDORepository
         $sth->execute([
             ':id' => $id
         ]);
-        $dbUserRaw = $sth->fetch(\PDO::FETCH_ASSOC);
+        $dbUserRaw = $sth->fetch(PDO::FETCH_ASSOC);
 
-        if ($dbUserRaw) {
-            $userEntity = $this->bindEntity($dbUserRaw);
-            $userEntity->setUserPermissions($userPermissionRepository->loadUserPermissions($userEntity->getId()));
+        if (!$dbUserRaw) {
+            return null;
         }
+
+        $userEntity = $this->bindEntity($dbUserRaw);
+        $userEntity->setUserPermissions($userPermissionRepository->loadUserPermissions($userEntity->getId()));
 
         return $userEntity;
     }
@@ -62,16 +70,16 @@ class UserRepository extends PDORepository
         $sth->execute([
             ':value' => $value
         ]);
-        $dbUserRaw = $sth->fetch(\PDO::FETCH_ASSOC);
+        $dbUserRaw = $sth->fetch(PDO::FETCH_ASSOC);
 
-        if ($dbUserRaw) {
-
-            $userEntity = $this->bindEntity($dbUserRaw);
-
-            $userPermissionRepository = new UserPermissionRepository($this->db);
-            $userEntity->setUserPermissions($userPermissionRepository->loadUserPermissions($userEntity->getId()));
-
+        if (!$dbUserRaw) {
+            return null;
         }
+
+        $userEntity = $this->bindEntity($dbUserRaw);
+
+        $userPermissionRepository = new UserPermissionRepository($this->db);
+        $userEntity->setUserPermissions($userPermissionRepository->loadUserPermissions($userEntity->getId()));
 
         return $userEntity;
 
@@ -83,7 +91,7 @@ class UserRepository extends PDORepository
         if ($userEntity->getId() === null) {
             $sth = $this->db->prepare("INSERT INTO users (login, password_hash) VALUES (:login, :password_hash)");
             $sth->execute([
-                'login' => $userEntity->getLogin(),
+                'login' => htmlspecialchars($userEntity->getLogin()),
                 'password_hash' => $userEntity->getPasswordHash()
             ]);
             # This block need use transaction :)
@@ -92,7 +100,7 @@ class UserRepository extends PDORepository
             $sth = $this->db->prepare("UPDATE users SET login = :login, password_hash = :password_hash WHERE id = :id");
             $sth->execute([
                 ':id' => $userEntity->getId(),
-                'login' => $userEntity->getLogin(),
+                'login' => htmlspecialchars($userEntity->getLogin()),
                 'password_hash' => $userEntity->getPasswordHash()
             ]);
         }

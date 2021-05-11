@@ -11,7 +11,7 @@ class RouteResolver
 
     /**
      * RouteResolver constructor.
-     * @param array $routeItems \
+     * @param array|null $routeItems
      */
     public function __construct(?array $routeItems)
     {
@@ -21,7 +21,7 @@ class RouteResolver
     /**
      * @param RouteItem $item
      */
-    public function add(RouteItem $item)
+    public function add(RouteItem $item): void
     {
         $this->routeItems[] = $item;
     }
@@ -29,7 +29,7 @@ class RouteResolver
     /**
      * @param array $routeItems
      */
-    public function addItems(array $routeItems)
+    public function addItems(array $routeItems): void
     {
         $this->routeItems = $routeItems;
     }
@@ -53,14 +53,10 @@ class RouteResolver
 
             $regex = "/^" . str_replace(["\/", "/"], "\/", $regex) . "$/mi";
 
-            if (preg_match($regex, $requestUri, $matches)) {
-
-                if ($routeItem->hasMethod($requestMethod)) {
-                    $routeItem->setParams(array_splice($matches, 1));
-                    $route = $routeItem;
-                    break;
-                }
-
+            if (preg_match($regex, $requestUri, $matches) && $routeItem->hasMethod($requestMethod)) {
+                $routeItem->setParams(array_splice($matches, 1));
+                $route = $routeItem;
+                break;
             }
 
         }

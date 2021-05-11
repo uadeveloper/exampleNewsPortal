@@ -5,40 +5,18 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserPermissionRepository;
 use App\Repository\UserRepository;
-use SiteCore\AbstractController;
 use SiteCore\Components\Routing\Route;
-use SiteCore\Components\Session\Session;
-use SiteCore\Components\Template\View;
 
-class AdminUsersController extends AbstractController
+class AdminUsersController extends AdminBaseController
 {
 
-    private $view;
     private $userRepository;
     private $permissionsRepository;
 
-    public function __construct(Session $session, View $view, \PDO $db, Route $route)
+    public function index(Route $route) : void
     {
-        $this->view = $view;
+        $this->userRepository = new UserRepository($this->db);
 
-        $this->userRepository = new UserRepository($db);
-        $this->permissionsRepository = new UserPermissionRepository($db);
-
-        if ($session->has("user_id")) {
-            $this->user = $this->userRepository->findById($session->get("user_id"));
-            $view->assign("user", $this->user);
-        }
-
-        if (!$this->user || !$this->user->hasUserPermission("admin")) {
-            $route->redirect("/");
-        }
-
-        $this->view->assign("title", "Администратор - Управление пользователями.");
-
-    }
-
-    public function index(Route $route)
-    {
         $usersLimits = [
             "offset" => (int)$route->getRouteItem()->getParams()[0],
             "limit" => 10,
@@ -47,6 +25,7 @@ class AdminUsersController extends AbstractController
 
         $users = $this->userRepository->loadUsers($usersLimits);
 
+        $this->view->assign("title", "Администратор - Управление пользователями.");
         $this->view->render("/admin/users/index.php", [
             "users" => $users,
             "usersLimits" => $usersLimits,
@@ -54,8 +33,11 @@ class AdminUsersController extends AbstractController
 
     }
 
-    public function store()
+    public function store() : void
     {
+        $this->userRepository = new UserRepository($this->db);
+        $this->permissionsRepository = new UserPermissionRepository($this->db);
+
         $id = (int)$_POST["id"];
         $login = trim(htmlspecialchars($_POST['login']));
         $password = trim($_POST['password']);
@@ -108,7 +90,7 @@ class AdminUsersController extends AbstractController
         }
 
         $userPermissions = [];
-        if(is_array($_POST['permissions'])) {
+        if (is_array($_POST['permissions'])) {
             foreach ($_POST['permissions'] as $permissionId) {
                 $userPermissions[] = $this->permissionsRepository->findById($permissionId);
             }
@@ -123,8 +105,11 @@ class AdminUsersController extends AbstractController
         ]);
     }
 
-    public function view(Route $route)
+    public function view(Route $route) : void
     {
+        $this->userRepository = new UserRepository($this->db);
+        $this->permissionsRepository = new UserPermissionRepository($this->db);
+
         $id = (int)$route->getRouteItem()->getParams()[0];
 
         if ($id) {
@@ -145,8 +130,10 @@ class AdminUsersController extends AbstractController
 
     }
 
-    public function delete(Route $route)
+    public function delete(Route $route) : void
     {
+        $this->userRepository = new UserRepository($this->db);
+
         $id = (int)$route->getRouteItem()->getParams()[0];
 
         $userItem = $this->userRepository->findByColumn("id", $id);

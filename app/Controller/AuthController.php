@@ -52,6 +52,7 @@ class AuthController extends AbstractController
             return;
         }
 
+        $this->session->start();
         $this->session->set("user_id", $userEntity->getId());
 
         echo(json_encode([
@@ -71,7 +72,7 @@ class AuthController extends AbstractController
 
     }
 
-    public function register()
+    public function register(): void
     {
 
         $login = trim($_POST['login']);
@@ -108,6 +109,7 @@ class AuthController extends AbstractController
 
         $this->userRepository->save($userEntity);
 
+        $this->session->start();
         $this->session->set("user_id", $userEntity->getId());
 
         echo(json_encode([
@@ -116,7 +118,8 @@ class AuthController extends AbstractController
 
     }
 
-    public function error404(View $view) {
+    public function error404(View $view): void
+    {
         $view->render("errors/404.php", [
             "title" => "Ничего не нашли"
         ]);

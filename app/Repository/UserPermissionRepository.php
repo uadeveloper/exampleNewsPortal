@@ -7,6 +7,11 @@ use App\Entity\UserPermission;
 use SiteCore\AbstractEntity;
 use SiteCore\PDORepository;
 
+/**
+ * Class UserPermissionRepository
+ * @package App\Repository
+ * TODO: перенести общие методы
+ */
 class UserPermissionRepository extends PDORepository
 {
 

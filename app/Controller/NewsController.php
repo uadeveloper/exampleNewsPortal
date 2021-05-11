@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * Index and news pages
+ */
+
 namespace App\Controller;
 
 use App\Repository\NewsRepository;
 use App\Repository\UserRepository;
+use PDO;
 use SiteCore\AbstractController;
 use SiteCore\Components\Routing\Route;
 use SiteCore\Components\Session\Session;
@@ -14,7 +19,7 @@ class NewsController extends AbstractController
     private $view;
     private $newsRepository;
 
-    public function __construct(Session $session, View $view, \PDO $db)
+    public function __construct(Session $session, View $view, PDO $db)
     {
         $this->view = $view;
         $this->newsRepository = new NewsRepository($db);
@@ -29,6 +34,7 @@ class NewsController extends AbstractController
 
     public function index() #: Response
     {
+
         $newsLimits = [
             "offset" => 0,
             "limit" => 10,

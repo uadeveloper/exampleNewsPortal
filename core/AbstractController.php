@@ -5,14 +5,20 @@ declare(strict_types=1);
 namespace SiteCore;
 
 use SiteCore\Components\Container\Container;
-use SiteCore\Components\Routing\RouteResolver;
 
+/**
+ * Class AbstractController
+ * @package SiteCore
+ */
 class AbstractController
 {
 
     protected $container;
 
-    final public function setContainer(Container $container)
+    /**
+     * @param Container $container
+     */
+    final public function setContainer(Container $container): void
     {
         $this->container = $container;
     }

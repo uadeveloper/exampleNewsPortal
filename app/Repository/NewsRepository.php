@@ -6,6 +6,11 @@ use App\Entity\News;
 use SiteCore\AbstractEntity;
 use SiteCore\PDORepository;
 
+/**
+ * Class NewsRepository
+ * @package App\Repository
+ * TODO: перенести общие методы
+ */
 class NewsRepository extends PDORepository
 {
 
@@ -90,10 +95,10 @@ class NewsRepository extends PDORepository
         if ($newsEntity->getId() === null) {
             $sth = $this->db->prepare("INSERT INTO news (name, short_content, content, publication_date) VALUES (:name, :short_content, :content, :publication_date)");
             $sth->execute([
-                'name' => $newsEntity->getName(),
-                'short_content' => $newsEntity->getShortContent(),
-                'content' => $newsEntity->getContent(),
-                'publication_date' => $newsEntity->getPublicationDate()
+                'name' => htmlspecialchars($newsEntity->getName()),
+                'short_content' => htmlspecialchars($newsEntity->getShortContent()),
+                'content' => htmlspecialchars($newsEntity->getContent()),
+                'publication_date' => htmlspecialchars($newsEntity->getPublicationDate())
             ]);
             # This block need use transaction :)
             $newsEntity->setId($this->db->lastInsertId());
@@ -101,10 +106,10 @@ class NewsRepository extends PDORepository
             $sth = $this->db->prepare("UPDATE news SET name = :name, short_content = :short_content, content = :content, publication_date = :publication_date WHERE id = :id");
             $sth->execute([
                 ':id' => $newsEntity->getId(),
-                'name' => $newsEntity->getName(),
-                'short_content' => $newsEntity->getShortContent(),
-                'content' => $newsEntity->getContent(),
-                'publication_date' => $newsEntity->getPublicationDate()
+                'name' => htmlspecialchars($newsEntity->getName()),
+                'short_content' => htmlspecialchars($newsEntity->getShortContent()),
+                'content' => htmlspecialchars($newsEntity->getContent()),
+                'publication_date' => htmlspecialchars($newsEntity->getPublicationDate())
             ]);
         }
 
