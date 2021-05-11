@@ -5,12 +5,12 @@
         <div class="col">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <p class="card-text"><?=$newsEntity->getShortContent()?></p>
+                    <p class="card-text"><?php echo $newsEntity->getShortContent()?></p>
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
-                            <a href="/news/<?=$newsEntity->getId()?>/" class="btn btn-sm btn-outline-secondary">Читать</a>
+                            <a href="/news/<?php echo $newsEntity->getId()?>/" class="btn btn-sm btn-outline-secondary">Читать</a>
                         </div>
-                        <small class="text-muted"><?=$newsEntity->getPublicationDate()?></small>
+                        <small class="text-muted"><?php echo $newsEntity->getPublicationDate()?></small>
                     </div>
                 </div>
             </div>
@@ -33,6 +33,6 @@ if($countNext > 10) {
     <?php } ?>
 
     <?php if($countNext > 0) { ?>
-        <a href="/news/page-<?=($newsLimits['offset'] + $newsLimits['limit'])?>/" class="btn btn-sm btn-outline-secondary">Следующие <?=$countNext?></a>
+        <a href="/news/page-<?php echo ($newsLimits['offset'] + $newsLimits['limit'])?>/" class="btn btn-sm btn-outline-secondary">Следующие <?php echo $countNext?></a>
     <?php } ?>
 </div>

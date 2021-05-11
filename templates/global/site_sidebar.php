@@ -8,7 +8,7 @@
                 <?php if($user && $user->getId()) { ?>
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                            Привет, <?= $user->getLogin() ?>
+                            Привет, <?php echo $user->getLogin() ?>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <?php if($user->hasUserPermission("admin")) { ?>

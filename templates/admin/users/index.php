@@ -35,22 +35,22 @@
                 foreach ($users as $userItem) {
                     ?>
                     <tr>
-                        <th scope="row"><?= $userItem->getId() ?></th>
+                        <th scope="row"><?php echo  $userItem->getId() ?></th>
                         <td>
-                            <a href="#" onclick="adminUsers.modal(<?= $userItem->getId() ?>); return false;">
-                                <?= $userItem->getLogin() ?>
+                            <a href="#" onclick="adminUsers.modal(<?php echo  $userItem->getId() ?>); return false;">
+                                <?php echo  $userItem->getLogin() ?>
                             </a>
                         </td>
                         <td>
                                 <?php foreach($userItem->getUserPermissions() AS $permissionItem) { ?>
-                                    <span class="badge bg-success"><?= $permissionItem->getPermission() ?></span>
+                                    <span class="badge bg-success"><?php echo  $permissionItem->getPermission() ?></span>
                                 <?php } ?>
                         </td>
-                        <td><?= $userItem->getCreated() ?></td>
+                        <td><?php echo  $userItem->getCreated() ?></td>
                         <td class="text-end">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <a href="#" onclick="adminUsers.modal(<?= $userItem->getId() ?>); return false;" type="button" class="btn btn-outline-primary btn-sm">Редактировать</a>
-                                <a href="#" onclick="adminUsers.delete(<?= $userItem->getId() ?>); return false;" type="button" class="btn btn-outline-danger btn-sm">Удалить</a>
+                                <a href="#" onclick="adminUsers.modal(<?php echo  $userItem->getId() ?>); return false;" type="button" class="btn btn-outline-primary btn-sm">Редактировать</a>
+                                <a href="#" onclick="adminUsers.delete(<?php echo  $userItem->getId() ?>); return false;" type="button" class="btn btn-outline-danger btn-sm">Удалить</a>
                             </div>
                         </td>
                     </tr>
@@ -73,7 +73,7 @@
                     <?php } ?>
 
                     <?php if($countNext > 0) { ?>
-                        <a href="/admin/users/page-<?=($usersLimits['offset'] + $usersLimits['limit'])?>/" class="btn btn-sm btn-outline-secondary">Следующие <?=$countNext?></a>
+                        <a href="/admin/users/page-<?php echo ($usersLimits['offset'] + $usersLimits['limit'])?>/" class="btn btn-sm btn-outline-secondary">Следующие <?php echo $countNext?></a>
                     <?php } ?>
                 </div>
 

@@ -37,18 +37,18 @@
                 foreach ($news as $newsEntity) {
                     ?>
                     <tr>
-                        <th scope="row"><?= $newsEntity->getId() ?></th>
+                        <th scope="row"><?php echo $newsEntity->getId() ?></th>
                         <td>
-                            <a href="#" onclick="adminNews.modal(<?= $newsEntity->getId() ?>); return false;">
-                                <?= $newsEntity->getName() ?>
+                            <a href="#" onclick="adminNews.modal(<?php echo $newsEntity->getId() ?>); return false;">
+                                <?php echo $newsEntity->getName() ?>
                             </a>
                         </td>
-                        <td><?= $newsEntity->getShortContent() ?></td>
-                        <td><?= $newsEntity->getPublicationDate() ?></td>
+                        <td><?php echo $newsEntity->getShortContent() ?></td>
+                        <td><?php echo $newsEntity->getPublicationDate() ?></td>
                         <td class="text-end">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <a href="#" onclick="adminNews.modal(<?= $newsEntity->getId() ?>); return false;" type="button" class="btn btn-outline-primary btn-sm">Редактировать</a>
-                                <a href="#" onclick="adminNews.delete(<?= $newsEntity->getId() ?>); return false;" type="button" class="btn btn-outline-danger btn-sm">Удалить</a>
+                                <a href="#" onclick="adminNews.modal(<?php echo $newsEntity->getId() ?>); return false;" type="button" class="btn btn-outline-primary btn-sm">Редактировать</a>
+                                <a href="#" onclick="adminNews.delete(<?php echo $newsEntity->getId() ?>); return false;" type="button" class="btn btn-outline-danger btn-sm">Удалить</a>
                             </div>
                         </td>
                     </tr>
@@ -73,7 +73,7 @@
                     <?php } ?>
 
                     <?php if($countNext > 0) { ?>
-                        <a href="/admin/news/page-<?=($newsLimits['offset'] + $newsLimits['limit'])?>/" class="btn btn-sm btn-outline-secondary">Следующие <?=$countNext?></a>
+                        <a href="/admin/news/page-<?php echo ($newsLimits['offset'] + $newsLimits['limit'])?>/" class="btn btn-sm btn-outline-secondary">Следующие <?php echo $countNext; ?></a>
                     <?php } ?>
                 </div>
 

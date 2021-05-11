@@ -9,20 +9,20 @@
                 <form action="/admin/news/" method="post" class="coreAppAjaxForm" data-success-url="/admin/news/">
 
                     <?php if($newsItem->getId()) { ?>
-                            <input type="hidden" name="id" value="<?=$newsItem->getId()?>">
+                            <input type="hidden" name="id" value="<?php echo $newsItem->getId()?>">
                     <?php } ?>
 
                     <div class="mb-3">
                         <label for="inputName" class="form-label">Название новости</label>
-                        <input type="text" name="name" class="form-control" id="inputName" value="<?=$newsItem->getName()?>" required>
+                        <input type="text" name="name" class="form-control" id="inputName" value="<?php echo $newsItem->getName()?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="textareaBlock" class="form-label">Краткое содержание</label>
-                        <textarea name="short_content" class="form-control" id="textareaBlock" rows="3" required><?=$newsItem->getShortContent()?></textarea>
+                        <textarea name="short_content" class="form-control" id="textareaBlock" rows="3" required><?php echo $newsItem->getShortContent()?></textarea>
                     </div>
                     <div class="mb-3">
                         <label for="textareaBlockFull" class="form-label">Полное содержание</label>
-                        <textarea name="content" class="form-control" id="textareaBlockFull" rows="10"><?=$newsItem->getContent()?></textarea>
+                        <textarea name="content" class="form-control" id="textareaBlockFull" rows="10"><?php echo $newsItem->getContent()?></textarea>
                     </div>
                     <div class="b-3">
                         <label for="inputDate" class="form-label">Дата публикации</label>

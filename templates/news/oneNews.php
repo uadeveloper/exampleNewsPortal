@@ -4,10 +4,10 @@
         <div class="container py-5">
             <div class="card">
                 <div class="card-header">
-                    <?=$newsItem->getName()?>
+                    <?php echo $newsItem->getName()?>
                 </div>
                 <div class="card-body">
-                    <p class="card-text"><?=$newsItem->getContent()?></p>
+                    <p class="card-text"><?php echo $newsItem->getContent()?></p>
                     <a href="/" class="btn btn-outline-secondary btn-sm">На главную</a>
                 </div>
             </div>
