@@ -47,9 +47,8 @@ class UserRepository extends PDORepository
         $userPermissionRepository = new UserPermissionRepository($this->db);
 
         $sth = $this->db->prepare("SELECT * FROM users WHERE id = :id LIMIT 1");
-        $sth->execute([
-            ':id' => $id
-        ]);
+        $sth->bindParam(':id', $id, PDO::PARAM_INT);
+        $sth->execute();
         $dbUserRaw = $sth->fetch(PDO::FETCH_ASSOC);
 
         if (!$dbUserRaw) {
@@ -67,9 +66,8 @@ class UserRepository extends PDORepository
 
         $column = preg_replace('/[^A-Za-z0-9_]+/', '', $column);
         $sth = $this->db->prepare("SELECT * FROM users WHERE {$column} = :value LIMIT 1");
-        $sth->execute([
-            ':value' => $value
-        ]);
+        $sth->bindParam(':value', $value, PDO::PARAM_STR);
+        $sth->execute();
         $dbUserRaw = $sth->fetch(PDO::FETCH_ASSOC);
 
         if (!$dbUserRaw) {
@@ -85,7 +83,7 @@ class UserRepository extends PDORepository
 
     }
 
-    public function save(User &$userEntity)
+    public function save(User &$userEntity): void
     {
 
         if ($userEntity->getId() === null) {
@@ -107,18 +105,17 @@ class UserRepository extends PDORepository
 
     }
 
-    public function delete(User &$userEntity)
+    public function delete(User &$userEntity): void
     {
         if ($userEntity->getId()) {
             $sth = $this->db->prepare("DELETE FROM users WHERE id = :id LIMIT 1");
-            $sth->execute([
-                ':id' => $userEntity->getId()
-            ]);
+            $sth->bindParam(':id', $userEntity->getId(), PDO::PARAM_INT);
+            $sth->execute();
             unset($userEntity);
         }
     }
 
-    private function bindEntity(array $data)
+    private function bindEntity(array $data): User
     {
 
         if (!$data) {

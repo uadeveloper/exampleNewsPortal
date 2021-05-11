@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\News;
+use PDO;
 use SiteCore\AbstractEntity;
 use SiteCore\PDORepository;
 
@@ -17,8 +18,8 @@ class NewsRepository extends PDORepository
     public function loadLastNews(&$limits = ['offset' => 0, 'limit' => 10, 'count' => null]): array
     {
         $sth = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM news WHERE publication_date <= NOW() ORDER BY publication_date DESC LIMIT :offset, :limit");
-        $sth->bindParam(':offset', $limits['offset'], \PDO::PARAM_INT);
-        $sth->bindParam(':limit', $limits['limit'], \PDO::PARAM_INT);
+        $sth->bindParam(':offset', $limits['offset'], PDO::PARAM_INT);
+        $sth->bindParam(':limit', $limits['limit'], PDO::PARAM_INT);
         $sth->execute();
 
         /**
@@ -26,9 +27,9 @@ class NewsRepository extends PDORepository
          */
         $countQuery = $this->db->prepare('SELECT FOUND_ROWS() AS rows_count');
         $countQuery->execute();
-        $limits['count'] = $countQuery->fetch(\PDO::FETCH_ASSOC)['rows_count'];
+        $limits['count'] = $countQuery->fetch(PDO::FETCH_ASSOC)['rows_count'];
 
-        $dbRaw = $sth->fetchAll(\PDO::FETCH_ASSOC);
+        $dbRaw = $sth->fetchAll(PDO::FETCH_ASSOC);
 
         $items = [];
         foreach ($dbRaw as $dbRawItem) {
@@ -42,15 +43,15 @@ class NewsRepository extends PDORepository
     public function loadNews(&$limits = ['offset' => 0, 'limit' => 10, 'count' => null]): array
     {
         $sth = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM news ORDER BY id DESC LIMIT :offset, :limit");
-        $sth->bindParam(':offset', $limits['offset'], \PDO::PARAM_INT);
-        $sth->bindParam(':limit', $limits['limit'], \PDO::PARAM_INT);
+        $sth->bindParam(':offset', $limits['offset'], PDO::PARAM_INT);
+        $sth->bindParam(':limit', $limits['limit'], PDO::PARAM_INT);
         $sth->execute();
 
         $countQuery = $this->db->prepare('SELECT FOUND_ROWS() AS rows_count');
         $countQuery->execute();
-        $limits['count'] = $countQuery->fetch(\PDO::FETCH_ASSOC)['rows_count'];
+        $limits['count'] = $countQuery->fetch(PDO::FETCH_ASSOC)['rows_count'];
 
-        $dbRaw = $sth->fetchAll(\PDO::FETCH_ASSOC);
+        $dbRaw = $sth->fetchAll(PDO::FETCH_ASSOC);
 
         $news = [];
         foreach ($dbRaw as $dbRawItem) {
@@ -65,31 +66,30 @@ class NewsRepository extends PDORepository
 
         $column = preg_replace('/[^A-Za-z0-9_]+/', '', $column);
         $sth = $this->db->prepare("SELECT * FROM news WHERE {$column} = :value LIMIT 1");
-        $sth->execute([
-            ':value' => $value
-        ]);
-        $dbRaw = $sth->fetch(\PDO::FETCH_ASSOC);
+        $sth->bindParam(':value', $value, PDO::PARAM_STR);
+        $sth->execute();
+        $dbRaw = $sth->fetch(PDO::FETCH_ASSOC);
 
-        if ($dbRaw) {
-            $entity = $this->bindEntity($dbRaw);
+        if (!$dbRaw) {
+            return null;
+
         }
 
-        return $entity;
+        return $this->bindEntity($dbRaw);
 
     }
 
-    public function delete(News &$newsEntity)
+    public function delete(News &$newsEntity): void
     {
         if ($newsEntity->getId()) {
             $sth = $this->db->prepare("DELETE FROM news WHERE id = :id LIMIT 1");
-            $sth->execute([
-                ':id' => $newsEntity->getId()
-            ]);
+            $sth->bindParam(':id', $newsEntity->getId(), PDO::PARAM_INT);
+            $sth->execute();
             unset($newsEntity);
         }
     }
 
-    public function save(News &$newsEntity)
+    public function save(News &$newsEntity): void
     {
 
         if ($newsEntity->getId() === null) {
@@ -115,7 +115,7 @@ class NewsRepository extends PDORepository
 
     }
 
-    private function bindEntity(array $data)
+    private function bindEntity(array $data): News
     {
 
         if (!$data) {

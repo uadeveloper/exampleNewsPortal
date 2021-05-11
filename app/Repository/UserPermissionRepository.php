@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\User;
 use App\Entity\UserPermission;
+use Exception;
+use PDO;
 use SiteCore\AbstractEntity;
 use SiteCore\PDORepository;
 
@@ -20,7 +22,7 @@ class UserPermissionRepository extends PDORepository
 
         $sth = $this->db->prepare("SELECT * FROM users_permissions");
         $sth->execute();
-        $rawDbPermissions = $sth->fetchAll(\PDO::FETCH_ASSOC);
+        $rawDbPermissions = $sth->fetchAll(PDO::FETCH_ASSOC);
 
         $permissions = [];
 
@@ -40,16 +42,15 @@ class UserPermissionRepository extends PDORepository
     {
 
         $sth = $this->db->prepare("SELECT * FROM users_permissions WHERE id = :id LIMIT 1");
-        $sth->execute([
-            ':id' => $id
-        ]);
-        $dbUserRaw = $sth->fetch(\PDO::FETCH_ASSOC);
+        $sth->bindParam(':id', $id, PDO::PARAM_INT);
+        $sth->execute();
+        $dbUserRaw = $sth->fetch(PDO::FETCH_ASSOC);
 
-        if ($dbUserRaw) {
-            $entity = $this->bindEntity($dbUserRaw);
+        if (!$dbUserRaw) {
+            return null;
         }
 
-        return $entity;
+        return $this->bindEntity($dbUserRaw);
 
     }
 
@@ -57,16 +58,15 @@ class UserPermissionRepository extends PDORepository
      * Получение списка прав определенного пользователя
      * @param int $userId
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function loadUserPermissions(int $userId): ?array
     {
 
         $sth = $this->db->prepare("SELECT * FROM users_permissions_rel WHERE user_id = :user_id");
-        $sth->execute([
-            ":user_id" => $userId
-        ]);
-        $rawUserPermissionsRels = $sth->fetchAll(\PDO::FETCH_ASSOC);
+        $sth->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $sth->execute();
+        $rawUserPermissionsRels = $sth->fetchAll(PDO::FETCH_ASSOC);
 
         $permissions = [];
 
@@ -82,13 +82,12 @@ class UserPermissionRepository extends PDORepository
 
     }
 
-    public function saveUserPermissionsRels(User $userEntity)
+    public function saveUserPermissionsRels(User $userEntity): void
     {
 
         $sth = $this->db->prepare("DELETE FROM users_permissions_rel WHERE user_id = :user_id LIMIT 1");
-        $sth->execute([
-            ':user_id' => $userEntity->getId()
-        ]);
+        $sth->bindParam(':user_id', $userEntity->getId(), PDO::PARAM_INT);
+        $sth->execute();
 
         foreach ($userEntity->getUserPermissions() as $userPermission) {
             $this->saveUserPermissionRel($userPermission, $userEntity);
@@ -96,22 +95,20 @@ class UserPermissionRepository extends PDORepository
 
     }
 
-    public function saveUserPermissionRel(UserPermission $userPermission, User $userEntity)
+    public function saveUserPermissionRel(UserPermission $userPermission, User $userEntity): void
     {
         $sth = $this->db->prepare("INSERT INTO users_permissions_rel (user_id, permission_id) VALUES (:user_id, :permission_id)");
-        $sth->execute([
-            'user_id' => $userEntity->getId(),
-            'permission_id' => $userPermission->getId()
-        ]);
-        # This block need use transaction :)
+        $sth->bindParam(':user_id', $userEntity->getId(), PDO::PARAM_INT);
+        $sth->bindParam(':permission_id', $userPermission->getId(), PDO::PARAM_INT);
+        $sth->execute();
         $userEntity->setId($this->db->lastInsertId());
     }
 
-    private function bindEntity(array $data)
+    private function bindEntity(array $data): UserPermission
     {
 
         if (!$data) {
-            throw new \Exception("Bind data entity is empty.");
+            throw new Exception("Bind data entity is empty.");
         }
 
         $entity = new UserPermission();
